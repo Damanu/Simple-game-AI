@@ -36,18 +36,15 @@ class Agent:
         dist = int(round(np.linalg.norm(np.array(direction))))
         if dist <= 2 :
             self.position += direction
-            print(direction)
-            print(dist)
         else:
             self.position += np.array(direction)
             self.tick += int(round(((np.linalg.norm(direction)-2)*5.0/self.vel).clip(min = 0)))
-            print(direction)
-            print(dist)
 
     def attack(self, target):
         if round(np.linalg.norm(self.position - target.position)) <= 1:
             if (random.randint(1,20) + random.randint(1,20) + self.att) > target.vtd:
                 target.lp -= self.dmg + random.randint(1,6)
+                print(target.lp)
                 self.tick += self.attspeed
             else:
                 self.tick += self.attspeed
@@ -55,16 +52,25 @@ class Agent:
 
 A=Agent("hans",(1,1),2,10,7,2,9,5,20)
 B=Agent("franz",(2,0),5,10,7,2,9,5,30)
+
+
+
+#########################################
+#   Game loop #
+
 run = True
 while run:
-    print(Agent.gtick)
+  #  print(Agent.gtick)
     for figure in Agent.instances:
         if (figure.tick - Agent.gtick) <= 0:
             print(figure.name)
             action = str(input("input: "))
             print(action)
             if action == "attack":
-                figure.attack(eval(input("target: ")))
+                lot = [x for x in Agent.instances] 
+                print("Possible targets: ",lot )
+                target = str(input(" "))
+                figure.attack(eval(target))
             if action == "move":
                 xdir = int(input("x: "))
                 ydir = int(input("y: "))
@@ -73,14 +79,7 @@ while run:
                 for x in Agent.instances:
                     print(x.name,", LP: ",x.lp , ", pos: " , x.position)
     Agent.gtick += 1
-#if action == "attack":
-#for a in Agent.instances: print(a.lp)
-#A.attack(B)
-#print(B.lp)
-#print("pos: ",A.position)
-#print("tick: ",A.tick)
-#A.move((16,16))
-#print("pos: ",A.position)
-#print("tick: ",A.tick)
-
+    for x in Agent.instances:
+        if x.lp <= 0:
+            run = False
 
