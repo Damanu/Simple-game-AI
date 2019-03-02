@@ -5,12 +5,19 @@ import random
 ##################################
 # Functions #
 
-def normalize(v):
-    return np.divide(v,np.linalg.norm(v))
 
 
 #################################
 # Classes #
+
+class object:
+    numofobjects = 0
+
+    def __init__(self, position):
+        self.position = position
+
+
+
 
 class Agent:
 
