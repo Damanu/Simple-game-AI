@@ -35,17 +35,43 @@ class Agent:
         self.att = int(att)
         self.attspeed = int(attspeed)
         self.name = str(name)
+        ###Flags####
+        self.freemoveflag = False
+        self.continuousflag = False
+        ############
 
         Agent.numofagents += 1
         Agent.instances.add(self)
+    def update(self):
+        self.freemoveflag = False
+        self.continuousflag = False
+
+    def get_position(self):
+        if self.continuousflag == True:
+            print(self.direction)
+            print((Agent.gtick-self.t0)/self.T)
+            print(self.direction*(Agent.gtick-self.t0)/self.T)
+            print(self.position0)
+            return self.position0 +self.direction*(Agent.gtick-self.t0)/self.T
+
+        else:
+            return self.position
+    def freemove(self, direction):
+        if self.freemoveflag == False:
+            dist = np.linalg.norm(np.array(direction))
+            self.position += direction
+            self.freemoveflag = True
 
     def move(self,direction):
-        dist = int(round(np.linalg.norm(np.array(direction))))
-        if dist <= 2 :
-            self.position += direction
-        else:
-            self.position += np.array(direction)
-            self.tick += int(round(((np.linalg.norm(direction)-2)*5.0/self.vel).clip(min = 0)))
+        self.continuousflag = True
+        self.t0 = self.tick
+        self.position0 = self.position
+        self.direction = np.array(direction)
+        self.position += self.direction
+        self.T = int(round((np.linalg.norm(direction)*5.0/self.vel).clip(min = 0)))
+        if self.T == 0:
+            self.T = 1
+        self.tick += self.T
 
     def attack(self, target):
         if round(np.linalg.norm(self.position - target.position)) <= 1:
@@ -57,11 +83,13 @@ class Agent:
                 self.tick += self.attspeed
 
 
-A=Agent("hans",(1,1),2,10,7,2,9,5,20)
-B=Agent("franz",(2,0),5,10,7,2,9,5,30)
-
-
-
+hans = Agent("hans",(1,1),0,10,7,2,9,5,20)
+franz = Agent("franz",(2,0),5,10,7,2,9,5,30)
+print(hans.get_position())
+hans.move((10,10))
+Agent.gtick += 4 
+print(hans.get_position())
+print(hans.position)
 #########################################
 #   Game loop #
 
